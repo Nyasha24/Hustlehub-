@@ -1,0 +1,569 @@
+{
+	"info": {
+		"_postman_id": "8a7c6b5d-4e3f-4a1b-9c8d-7e6f5a4b3c2d",
+		"name": "HustleHub+ (H²⁺) Part 2 - Complete Secure Stack API Collection",
+		"description": "Comprehensive Postman test suite covering RBAC, NoSQL & XSS Sanitization, Multi-Tier Rate Limiting, Google SSO, Resend OTP Password Recovery, Simulated Escrow Bookings, and 15% SARS Tax Calculations.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Authentication & Security",
+			"item": [
+				{
+					"name": "Register Client (Strong Password)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"JWT Token and User Profile returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('token');",
+									"    pm.expect(jsonData.data.role).to.eql('client');",
+									"    pm.environment.set(\"client_token\", jsonData.token);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Thabo Mokoena\",\n  \"email\": \"thabo.client.{{$randomInt}}@example.com\",\n  \"password\": \"P@ssword2026!Secure\",\n  \"role\": \"client\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					}
+				},
+				{
+					"name": "Register Freelancer (Strong Password)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Freelancer JWT Token received\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('token');",
+									"    pm.expect(jsonData.data.role).to.eql('freelancer');",
+									"    pm.environment.set(\"freelancer_token\", jsonData.token);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Zanele Dlamini\",\n  \"email\": \"zanele.freelance.{{$randomInt}}@example.com\",\n  \"password\": \"Hustle#Pro2026Dev\",\n  \"role\": \"freelancer\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					}
+				},
+				{
+					"name": "Password Complexity Defense (Weak Password Rejection)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 Bad Request on weak password\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"Password policy violation message returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.error).to.include(\"Password\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Weak User\",\n  \"email\": \"weak.user.{{$randomInt}}@example.com\",\n  \"password\": \"weak\",\n  \"role\": \"client\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					}
+				},
+				{
+					"name": "Request Password Reset OTP (Resend Service)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Confirmation message returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include(\"OTP\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"mthunzi.sibiya2005@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/forgot-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"forgot-password"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Gigs & RBAC Enforcement",
+			"item": [
+				{
+					"name": "Get All Gigs (Public)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Response is an array of gigs\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/gigs",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"gigs"
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Gig (As Freelancer - Allowed)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Gig ID saved to environment\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('_id');",
+									"    pm.environment.set(\"gig_id\", jsonData._id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{freelancer_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Full Stack MERN Web App Development\",\n  \"description\": \"Custom responsive web application built with React, Node.js, and MongoDB.\",\n  \"category\": \"Web Development\",\n  \"price\": 5000,\n  \"location\": \"Cape Town, Western Cape\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/gigs",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"gigs"
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Gig (As Client - RBAC 403 Forbidden)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403 Forbidden for client role\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"pm.test(\"Access denied error returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.error).to.include(\"Access denied\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{client_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Illegal Client Gig\",\n  \"description\": \"Clients cannot create gigs.\",\n  \"price\": 1000,\n  \"location\": \"Johannesburg\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/gigs",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"gigs"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Bookings & Escrow Flow",
+			"item": [
+				{
+					"name": "Book Gig (As Client - Escrow Initialized)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Booking & Simulated Transaction returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('booking');",
+									"    pm.expect(jsonData).to.have.property('transaction');",
+									"    pm.expect(jsonData.booking.status).to.eql('pending');",
+									"    pm.environment.set(\"booking_id\", jsonData.booking._id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{client_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"gigId\": \"{{gig_id}}\",\n  \"requirements\": \"Please deliver a responsive React dashboard with authentication.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/bookings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get User Bookings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Bookings array returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{client_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/bookings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Booking Status (Freelancer Accept)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Status updated to accepted\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.booking.status).to.eql('accepted');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{freelancer_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"accepted\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/bookings/{{booking_id}}/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"{{booking_id}}",
+								"status"
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Booking Status (Freelancer Mark Completed & Disburse)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Status updated to completed\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.booking.status).to.eql('completed');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{freelancer_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"completed\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/bookings/{{booking_id}}/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"{{booking_id}}",
+								"status"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Financial & 15% Tax Intelligence",
+			"item": [
+				{
+					"name": "Get Freelancer Income & SARS Tax Reserve",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Financial breakdown fields present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('grossRevenue');",
+									"    pm.expect(jsonData).to.have.property('platformFees');",
+									"    pm.expect(jsonData).to.have.property('netEarnings');",
+									"    pm.expect(jsonData).to.have.property('completedJobsCount');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{freelancer_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/transactions/freelancer-income",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"transactions",
+								"freelancer-income"
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}
