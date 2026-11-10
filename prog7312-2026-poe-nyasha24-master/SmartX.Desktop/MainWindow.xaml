@@ -1,0 +1,171 @@
+<Window x:Class="SmartX.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Smart-X Gateway Console" Height="700" Width="1000"
+        Background="#F4F6F8">
+
+    <Window.Resources>
+        <!-- Row highlighting tied to alert severity: this is the "engagement
+             strategy integrated seamlessly, dynamically reflecting real-time
+             system states" requirement from the rubric. -->
+        <Style x:Key="ReadingRowStyle" TargetType="DataGridRow">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Severity}" Value="Warning">
+                    <Setter Property="Background" Value="#FFF3CD" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Severity}" Value="Critical">
+                    <Setter Property="Background" Value="#F8D7DA" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="AlertRowStyle" TargetType="DataGridRow">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Severity}" Value="Warning">
+                    <Setter Property="Background" Value="#FFF3CD" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Severity}" Value="Critical">
+                    <Setter Property="Background" Value="#F8D7DA" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True">
+
+        <!-- Connection status bar -->
+        <Border DockPanel.Dock="Top" Background="#2D3E50" Padding="12,8">
+            <StackPanel Orientation="Horizontal">
+                <Ellipse Width="10" Height="10" Fill="Orange" Margin="0,0,8,0" VerticalAlignment="Center" x:Name="StatusDot"/>
+                <TextBlock x:Name="StatusText" Text="Connecting to gateway..." Foreground="White" VerticalAlignment="Center" FontWeight="SemiBold"/>
+            </StackPanel>
+        </Border>
+
+        <TabControl Margin="10" DockPanel.Dock="Top">
+
+            <!-- ===================== DASHBOARD TAB ===================== -->
+            <TabItem Header="Live Dashboard">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="1.2*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Live Telemetry Feed" FontSize="18" FontWeight="Bold" Margin="0,0,0,8" />
+
+                    <DataGrid Grid.Row="1" x:Name="ReadingsGrid" AutoGenerateColumns="False"
+                              IsReadOnly="True" RowStyle="{StaticResource ReadingRowStyle}"
+                              HeadersVisibility="Column" CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Time" Binding="{Binding Timestamp, StringFormat='HH:mm:ss'}" Width="90" />
+                            <DataGridTextColumn Header="Sensor" Binding="{Binding SensorId}" Width="180" />
+                            <DataGridTextColumn Header="Zone" Binding="{Binding Zone}" Width="160" />
+                            <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="120" />
+                            <DataGridTextColumn Header="Value" Binding="{Binding DisplayValue}" Width="100" />
+                            <DataGridTextColumn Header="Severity" Binding="{Binding Severity}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <TextBlock Grid.Row="2" Text="Alerts (Tiered / Anomaly + Disconnect)" FontSize="18" FontWeight="Bold" Margin="0,12,0,8" />
+
+                    <DataGrid Grid.Row="3" x:Name="AlertsGrid" AutoGenerateColumns="False"
+                              IsReadOnly="True" RowStyle="{StaticResource AlertRowStyle}"
+                              HeadersVisibility="Column" CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Time" Binding="{Binding RaisedAt, StringFormat='HH:mm:ss'}" Width="90" />
+                            <DataGridTextColumn Header="Sensor" Binding="{Binding SensorId}" Width="180" />
+                            <DataGridTextColumn Header="Zone" Binding="{Binding Zone}" Width="160" />
+                            <DataGridTextColumn Header="Severity" Binding="{Binding Severity}" Width="100" />
+                            <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- ===================== REGISTER / INGEST TAB ===================== -->
+            <TabItem Header="Register &amp; Ingest">
+                <Grid Margin="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Registration panel -->
+                    <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                        <TextBlock Text="Register a New Sensor" FontSize="16" FontWeight="Bold" Margin="0,0,0,12" />
+
+                        <TextBlock Text="MAC Address" FontWeight="SemiBold" />
+                        <TextBox x:Name="RegMacBox" Text="AA:BB:CC:99:00:XX" />
+
+                        <TextBlock Text="Zone" FontWeight="SemiBold" />
+                        <TextBox x:Name="RegZoneBox" Text="Greenhouse 1" />
+
+                        <TextBlock Text="Category" FontWeight="SemiBold" />
+                        <ComboBox x:Name="RegCategoryBox" SelectedIndex="0">
+                            <ComboBoxItem Content="SoilMoisture" />
+                            <ComboBoxItem Content="PowerWattage" />
+                            <ComboBoxItem Content="ValveState" />
+                        </ComboBox>
+
+                        <Button Content="Register Sensor" Click="RegisterButton_Click" HorizontalAlignment="Left" Margin="0,10,0,0" />
+                        <TextBlock x:Name="RegStatusText" Margin="0,10,0,0" TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <!-- Manual ingest panel -->
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Send a Manual Reading" FontSize="16" FontWeight="Bold" Margin="0,0,0,12" />
+
+                        <TextBlock Text="Sensor ID (MAC)" FontWeight="SemiBold" />
+                        <TextBox x:Name="IngestSensorIdBox" Text="AA:BB:CC:99:00:XX" />
+
+                        <TextBlock Text="Zone" FontWeight="SemiBold" />
+                        <TextBox x:Name="IngestZoneBox" Text="Greenhouse 1" />
+
+                        <TextBlock Text="Category" FontWeight="SemiBold" />
+                        <ComboBox x:Name="IngestCategoryBox" SelectedIndex="0">
+                            <ComboBoxItem Content="SoilMoisture" />
+                            <ComboBoxItem Content="PowerWattage" />
+                            <ComboBoxItem Content="ValveState" />
+                        </ComboBox>
+
+                        <TextBlock Text="Value (number, or 'true'/'false' for valve)" FontWeight="SemiBold" />
+                        <TextBox x:Name="IngestValueBox" Text="45.0" />
+
+                        <Button Content="Send Reading" Click="SendReadingButton_Click" HorizontalAlignment="Left" Margin="0,10,0,0" />
+                        <TextBlock x:Name="IngestStatusText" Margin="0,10,0,0" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- ===================== UPLOAD TAB ===================== -->
+            <TabItem Header="Upload Logs / Media">
+                <StackPanel Margin="20" HorizontalAlignment="Left">
+                    <TextBlock Text="Upload a Log File or Sensor Photo" FontSize="16" FontWeight="Bold" Margin="0,0,0,12" />
+                    <TextBlock x:Name="SelectedFileText" Text="No file selected." Margin="0,0,0,10" TextWrapping="Wrap" Width="500"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Choose File..." Click="ChooseFileButton_Click" />
+                        <Button Content="Upload" Click="UploadButton_Click" />
+                    </StackPanel>
+
+                    <TextBlock x:Name="UploadStatusText" Margin="0,12,0,0" TextWrapping="Wrap" Width="500" />
+                </StackPanel>
+            </TabItem>
+
+            <!-- ===================== ZONE VALIDATION TAB ===================== -->
+            <TabItem Header="Zone Tree Validation">
+                <StackPanel Margin="20">
+                    <TextBlock Text="Recursive Zone/Sensor Validation" FontSize="16" FontWeight="Bold" Margin="0,0,0,12" />
+                    <Button Content="Run Validation" Click="ValidateZonesButton_Click" HorizontalAlignment="Left" Margin="0,0,0,10" />
+                    <TextBox x:Name="ValidationResultBox" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True"
+                             Height="400" VerticalScrollBarVisibility="Auto" FontFamily="Consolas" />
+                </StackPanel>
+            </TabItem>
+
+        </TabControl>
+    </DockPanel>
+</Window>

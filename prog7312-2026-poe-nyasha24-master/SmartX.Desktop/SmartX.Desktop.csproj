@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- WPF only builds on Windows. If your SDK is older than .NET 10,
+         change this to net8.0-windows instead. -->
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>SmartX.Desktop</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SmartX.Shared\SmartX.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- If NuGet can't resolve this exact version, right-click the project
+         in Visual Studio -> Manage NuGet Packages -> install the latest
+         8.x/9.x/10.x "Microsoft.AspNetCore.SignalR.Client" available to you.
+         The API used here (HubConnectionBuilder, HubConnection) has been
+         stable across all of those versions. -->
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.10" />
+  </ItemGroup>
+
+</Project>

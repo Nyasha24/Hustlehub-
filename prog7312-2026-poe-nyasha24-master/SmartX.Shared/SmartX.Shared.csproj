@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- If your installed SDK is older than .NET 10, change this (and the
+         same line in SmartX.Api.csproj / SmartX.Desktop.csproj) to net8.0 -->
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>SmartX.Shared</RootNamespace>
+  </PropertyGroup>
+
+</Project>

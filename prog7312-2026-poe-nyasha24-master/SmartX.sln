@@ -1,0 +1,34 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartX.Shared", "SmartX.Shared\SmartX.Shared.csproj", "{CE2B81AD-856B-42D1-BF7E-B30E06DB0D90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartX.Api", "SmartX.Api\SmartX.Api.csproj", "{DDC8A19E-0CFD-45E6-A1C7-47F11ACE6471}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartX.Desktop", "SmartX.Desktop\SmartX.Desktop.csproj", "{62A00303-F02D-468C-B3B2-27FD187385D8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE2B81AD-856B-42D1-BF7E-B30E06DB0D90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE2B81AD-856B-42D1-BF7E-B30E06DB0D90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE2B81AD-856B-42D1-BF7E-B30E06DB0D90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE2B81AD-856B-42D1-BF7E-B30E06DB0D90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDC8A19E-0CFD-45E6-A1C7-47F11ACE6471}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDC8A19E-0CFD-45E6-A1C7-47F11ACE6471}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDC8A19E-0CFD-45E6-A1C7-47F11ACE6471}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDC8A19E-0CFD-45E6-A1C7-47F11ACE6471}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62A00303-F02D-468C-B3B2-27FD187385D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62A00303-F02D-468C-B3B2-27FD187385D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62A00303-F02D-468C-B3B2-27FD187385D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62A00303-F02D-468C-B3B2-27FD187385D8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
